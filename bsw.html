@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador Star Wars</title>
+  <style>
+    * { box-sizing: border-box; }
+
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
+    }
+
+
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.55)),
+        url("https://i.blogs.es/ed8ee9/darth-vader-obi-wan-fight/1366_2000.jpg") center center / cover fixed no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-x: hidden;
+    }
+
+
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 55px 20px;
+    }
+
+
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 82px);
+      letter-spacing: 7px;
+      text-align: center;
+      text-transform: uppercase;
+      text-shadow: 0 0 12px rgba(255,255,255,.8), 0 0 35px rgba(0,150,255,.55);
+    }
+
+
+    .subtitle {
+      margin: 12px 0 55px;
+      color: #d8e8ff;
+      letter-spacing: 3px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+
+    .search-card {
+      width: min(760px, 95vw);
+      padding: 26px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 22px;
+      background: rgba(5, 8, 18, .58);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+    }
+
+
+    .search-row {
+      display: flex;
+      gap: 12px;
+    }
+
+
+    .input-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+
+    input, select, button {
+      width: 100%;
+      height: 58px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 17px;
+      outline: none;
+    }
+
+
+    input {
+      padding: 0 18px;
+      color: white;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.24);
+    }
+
+
+    input::placeholder { color: #d0d5df; }
+
+
+    input:focus {
+      border-color: #55b8ff;
+      box-shadow: 0 0 0 3px rgba(50,160,255,.18);
+    }
+
+
+    select {
+      width: 210px;
+      padding: 0 14px;
+      color: white;
+      background: #151c2b;
+      border: 1px solid rgba(255,255,255,.24);
+      cursor: pointer;
+    }
+
+
+    select option {
+      background: #151c2b;
+      color: white;
+    }
+
+
+    button {
+      width: 125px;
+      padding: 0 18px;
+      color: #06111b;
+      font-weight: 800;
+      background: linear-gradient(135deg, #66d8ff, #fff);
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s;
+    }
+
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(100,210,255,.35);
+    }
+
+
+    .hint {
+      margin: 14px 3px 0;
+      color: #c9d2df;
+      font-size: 13px;
+    }
+
+
+    .results {
+      width: min(760px, 95vw);
+      margin-top: 20px;
+      display: none;
+      padding: 22px;
+      border-radius: 18px;
+      background: rgba(3, 7, 15, .76);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(10px);
+    }
+
+
+    .results.show { display: block; }
+
+
+    .results h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+
+
+    .result {
+      padding: 12px 14px;
+      margin-top: 8px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.08);
+    }
+
+
+    .empty {
+      color: #cbd3df;
+      margin: 0;
+    }
+
+
+    @media (max-width: 700px) {
+      .page { padding-top: 35px; }
+      .subtitle { margin-bottom: 30px; }
+      .search-row { flex-direction: column; }
+      select, button { width: 100%; }
+      h1 { letter-spacing: 3px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>Buscador Star Wars</h1>
+    <p class="subtitle">Explora una galaxia muy, muy lejana</p>
+
+
+    <section class="search-card">
+      <div class="search-row">
+        <div class="input-wrap">
+          <input id="searchInput" type="text" placeholder="Buscar..." autocomplete="off">
+        </div>
+
+
+        <select id="category" aria-label="Categoría de búsqueda">
+          <option value="personajes">Personajes</option>
+          <option value="planetas">Planetas</option>
+          <option value="naves">Naves</option>
+        </select>
+
+
+        <button id="searchBtn">Buscar</button>
+      </div>
+
+
+      <p class="hint">Escribe lo que buscas y elige una categoría en el desplegable.</p>
+    </section>
+
+
+    <section id="results" class="results" aria-live="polite"></section>
+  </main>
+
+
+  <script>
+    const data = {
+      personajes: [
+        "Luke Skywalker", "Darth Vader", "Leia Organa", "Yoda",
+        "Obi-Wan Kenobi", "Han Solo", "Chewbacca", "Ahsoka Tano"
+      ],
+      planetas: [
+        "Tatooine", "Naboo", "Alderaan", "Coruscant",
+        "Hoth", "Endor", "Mustafar", "Dagobah"
+      ],
+      naves: [
+        "Millennium Falcon", "X-wing", "TIE Fighter",
+        "Star Destroyer", "A-wing", "Slave I", "X-wing Red Five"
+      ]
+    };
+
+
+    const input = document.getElementById("searchInput");
+    const category = document.getElementById("category");
+    const button = document.getElementById("searchBtn");
+    const results = document.getElementById("results");
+
+
+    function search() {
+      const term = input.value.trim().toLowerCase();
+      const type = category.value;
+      const found = data[type].filter(item =>
+        item.toLowerCase().includes(term)
+      );
+
+
+      results.classList.add("show");
+      results.innerHTML = `
+        <h2>${type.charAt(0).toUpperCase() + type.slice(1)}</h2>
+        ${
+          found.length
+            ? found.map(item => `<div class="result">${item}</div>`).join("")
+            : `<p class="empty">No se encontraron resultados.</p>`
+        }
+      `;
+    }
+
+
+    button.addEventListener("click", search);
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") search();
+    });
+  </script>
+</body>
+</html>
+
+
+
