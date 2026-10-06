@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+
+  <meta charset="UTF-8">
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+  <title>Buscador Star Wars</title>
+    
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    
+  <main class="page">
+    
+    <h1>Buscador Star Wars</h1>
+    <p class="subtitle">Explora una galaxia muy, muy lejana</p>
+
+
+    <!-- Secció que conté els controls per fer la cerca. -->
+    <section class="search-card">
+
+      <!-- Agrupa en una mateixa fila el camp de text, la categoria i el botó. -->
+      <div class="search-row">
+
+        <!-- Contenidor del camp on l'usuari escriu la cerca. -->
+        <div class="input-wrap">
+
+          <!-- Camp de text. L'id permet que JavaScript el pugui localitzar i llegir. -->
+          <input id="searchInput" type="text" placeholder="Buscar..." autocomplete="off">
+        </div>
+
+
+        <!-- Selector que permet escollir el tipus d'element que volem buscar. -->
+        <select id="category" aria-label="Categoría de búsqueda">
+          <!-- Cada <option> és una categoria disponible al buscador. -->
+          <option value="personajes">Personajes</option>
+          <option value="peliculas">Películas</option>
+          <option value="naves">Naves</option>
+          <option value="vehiculos">Vehículos</option>
+          <option value="especies">Especies</option>
+          <option value="planetas">Planetas</option>
+        </select>
+
+
+        <!-- Botó que inicia la cerca. JavaScript detecta el seu clic. -->
+        <button id="searchBtn">Buscar</button>
+      </div>
+
+
+      <!-- Text d'ajuda per explicar a l'usuari com funciona el buscador. -->
+      <p class="hint">Escribe lo que buscas, elige una categoría y haz clic en un resultado para ver más información.</p>
+    </section>
+
+
+    <!-- Zona buida on JavaScript inserirà dinàmicament els resultats de la cerca. -->
+    <section id="results" class="results" aria-live="polite"></section>
+  </main>
+
+
+  <!-- Finestra emergent que mostra els detalls de l'element seleccionat. Comença ocult. -->
+  <div id="modal" class="modal" hidden>
+    <!-- Contingut intern de la finestra emergent. Els atributs ARIA milloren l'accessibilitat. -->
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <!-- Botó per tancar la finestra de detalls. -->
+      <button class="close" id="closeBtn" aria-label="Cerrar">&times;</button>
+      <!-- JavaScript col·locarà aquí la informació detallada de l'element seleccionat. -->
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+
+  <!-- Connecta el JavaScript que controla les cerques, els resultats i la finestra de detalls. -->
+  <script src="script.js"></script>
+</body>
+</html>
