@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Buscador por Nombre y Categoría</title>
+</head>
+<body>
+  <h1>Buscador Multicategoría por Nombre</h1>
+
+  <!-- Formulario con desplegable de categorías e input para el nombre -->
+  <form id="formBuscador">
+    <label for="selectCategoria">Categoría:</label>
+    <select id="selectCategoria">
+      <option value="people">Personajes</option>
+      <option value="planets">Planetas</option>
+      <option value="starships">Naves</option>
+    </select>
+
+    <label for="inputNombre">Nombre:</label>
+    <input type="text" id="inputNombre" placeholder="Escribe un nombre..." >
+
+    <button type="submit">Buscar</button>
+  </form>
+
+  <!-- Contenedor donde se mostrarán los resultados dinámicos -->
+  <div id="resultado"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
