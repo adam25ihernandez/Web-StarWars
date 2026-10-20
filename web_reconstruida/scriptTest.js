@@ -52,6 +52,23 @@ async function buscarPorNombreYCategoria(event) {
     }
   }
 
+  //Alert con lista detallada 
+    enlace.addEventListener('click', function(event) {
+    event.preventDefault();
+
+    alert(
+      `Nombre: ${personaje.name}\n` +
+      `Altura: ${personaje.height} cm\n` +
+      `Peso: ${personaje.mass} kg\n` +
+      `Género: ${personaje.gender}\n` +
+      `Nacimiento: ${personaje.birth_year}`
+    );
+  });
+
+
+
+
+  
   // Limpiamos el mensaje de carga en el DOM
   contenedorResultado.textContent = '';
 
