@@ -1,10 +1,10 @@
-// 1. Acceso a los elementos del DOM mediante document.getElementById
+// Acceso a los elementos del DOM mediante document.getElementById
 const formulario = document.getElementById('formBuscador');
 const selectCategoria = document.getElementById('selectCategoria');
 const inputNombre = document.getElementById('inputNombre');
 const contenedorResultado = document.getElementById('resultado');
 
-// Diccionario de traducción de climas ☁️
+// Diccionario de traducción de climas
 const traduccionesClima = {
   arid: "árido",
   temperate: "templado",
@@ -27,7 +27,7 @@ async function buscarPorNombreYCategoria(event) {
 
   contenedorResultado.textContent = `Buscando "${textoBuscado}" en la categoría ${categoria}...`;
 
-  // Array para guardar todos los resultados encontrados 📦
+  // Array para guardar todos los resultados encontrados
   const resultadosEncontrados = [];
 
   for (let id = 1; id <= 80; id++) {
@@ -90,7 +90,7 @@ async function buscarPorNombreYCategoria(event) {
         const poblacion = document.createElement('p');
         poblacion.textContent = `Población: ${poblacionFormateada}`;
 
-        // 3. Insertamos dentro del <li> de este planeta
+        // Insertamos dentro del <li> de este planeta
         elementoLista.appendChild(clima);
         elementoLista.appendChild(poblacion);
       }
