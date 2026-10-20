@@ -19,6 +19,42 @@ const traduccionesClima = {
   unknown: "desconocido"
 };
 
+// Construye el texto del alert según la categoría (personajes, planetas, naves)
+function construirTextoAlert(categoria, elemento) {
+  if (categoria === 'people') {
+    return (
+      `Nombre: ${elemento.name}\n` +
+      `Altura: ${elemento.height} cm\n` +
+      `Peso: ${elemento.mass} kg\n` +
+      `Género: ${elemento.gender}\n` +
+      `Nacimiento: ${elemento.birth_year}`
+    );
+  }
+
+  if (categoria === 'planets') {
+    return (
+      `Nombre: ${elemento.name}\n` +
+      `Clima: ${traduccionesClima[elemento.climate] || elemento.climate}\n` +
+      `Terreno: ${elemento.terrain}\n` +
+      `Diámetro: ${elemento.diameter} km\n` +
+      `Población: ${elemento.population}`
+    );
+  }
+
+  if (categoria === 'starships') {
+    return (
+      `Nombre: ${elemento.name}\n` +
+      `Modelo: ${elemento.model}\n` +
+      `Fabricante: ${elemento.manufacturer}\n` +
+      `Pasajeros: ${elemento.passengers}\n` +
+      `Longitud: ${elemento.length} m`
+    );
+  }
+
+  // Resto de categorías (films, species, vehicles...)
+  return `Nombre: ${elemento.name || elemento.title}`;
+}
+
 async function buscarPorNombreYCategoria(event) {
   event.preventDefault();
 
@@ -52,23 +88,6 @@ async function buscarPorNombreYCategoria(event) {
     }
   }
 
-  //Alert con lista detallada 
-    enlace.addEventListener('click', function(event) {
-    event.preventDefault();
-
-    alert(
-      `Nombre: ${personaje.name}\n` +
-      `Altura: ${personaje.height} cm\n` +
-      `Peso: ${personaje.mass} kg\n` +
-      `Género: ${personaje.gender}\n` +
-      `Nacimiento: ${personaje.birth_year}`
-    );
-  });
-
-
-
-
-  
   // Limpiamos el mensaje de carga en el DOM
   contenedorResultado.textContent = '';
 
@@ -80,9 +99,16 @@ async function buscarPorNombreYCategoria(event) {
     resultadosEncontrados.forEach(elemento => {
       const elementoLista = document.createElement('li');
 
-      // Título con el nombre del resultado
+      // Título clicable: al hacer clic lanza el alert con la info
       const titulo = document.createElement('strong');
       titulo.textContent = elemento.name || elemento.title;
+      titulo.style.cursor = 'pointer';
+      titulo.style.textDecoration = 'underline';
+
+      titulo.addEventListener('click', function () {
+        alert(construirTextoAlert(categoria, elemento));
+      });
+
       elementoLista.appendChild(titulo);
 
       // DATOS ADICIONALES PARA PERSONAJES
