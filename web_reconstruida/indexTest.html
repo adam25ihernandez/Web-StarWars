@@ -1,31 +1,43 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Buscador por Nombre y Categoría</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador Star Wars 🌌</title>
   <link rel="stylesheet" href="styleWeb.css">
 </head>
 <body>
-  <h1>Buscador Multicategoría por Nombre</h1>
 
-  <!-- Formulario con desplegable de categorías e input para el nombre -->
-  <form id="formBuscador">
-    <label for="selectCategoria">Categoría:</label>
-    <select id="selectCategoria">
-      <option value="people">Personajes</option>
-      <option value="planets">Planetas</option>
-      <option value="starships">Naves</option>
-    </select>
+  <!-- AÑADIDO: 'div.page' para centrar todo el contenido vertical y horizontalmente -->
+  <div class="page">
+    <h1>Star Wars</h1>
+    <p class="subtitle">EXPLORA LA GALAXIA</p>
 
-    <label for="inputNombre">Nombre:</label>
-    <input type="text" id="inputNombre" placeholder="Escribe un nombre..." >
+    <!-- AÑADIDO: 'class="search-card"' para darle fondo de cristal translúcido al buscador -->
+    <div class="search-card">
+      
+      <!-- AÑADIDO: 'class="search-row"' para alinear los campos y el botón en una fila -->
+      <form id="formBuscador" class="search-row">
+        
+        <div class="input-wrap">
+          <input type="text" id="inputNombre" placeholder="Escribe un nombre..." required>
+        </div>
 
-    <button type="submit">Buscar</button>
-  </form>
+        <select id="selectCategoria">
+          <option value="people">Personajes</option>
+          <option value="planets">Planetas</option>
+          <option value="starships">Naves</option>
+        </select>
 
-  <!-- Contenedor donde se mostrarán los resultados dinámicos -->
-  <div id="resultado"></div>
+        <button type="submit">Buscar</button>
+      </form>
+      
+      <p class="hint">Ingresa las primeras letras para filtrar en la SWAPI</p>
+    </div>
+
+    <!-- MODIFICADO: agregar 'class="results"' para CSS -->
+    <div id="resultado" class="results"></div>
+  </div>
 
   <script src="scriptTest.js"></script>
 </body>
