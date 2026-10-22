@@ -1,0 +1,364 @@
+* { box-sizing: border-box; }
+
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
+    }
+
+
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.55)),
+        url("https://i.blogs.es/ed8ee9/darth-vader-obi-wan-fight/1366_2000.jpg") center center / cover fixed no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-x: hidden;
+    }
+
+
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 55px 20px;
+    }
+
+
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 82px);
+      letter-spacing: 7px;
+      text-align: center;
+      text-transform: uppercase;
+      text-shadow: 0 0 12px rgba(255,255,255,.8), 0 0 35px rgba(0,150,255,.55);
+    }
+
+
+    .subtitle {
+      margin: 12px 0 55px;
+      color: #d8e8ff;
+      letter-spacing: 3px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+
+    .search-card {
+      width: min(760px, 95vw);
+      padding: 26px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 22px;
+      background: rgba(5, 8, 18, .58);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+    }
+
+
+    .search-row {
+      display: flex;
+      gap: 12px;
+    }
+
+
+    .input-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+
+    input, select, button {
+      width: 100%;
+      height: 58px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 17px;
+      outline: none;
+    }
+
+
+    input {
+      padding: 0 18px;
+      color: white;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.24);
+    }
+
+
+    input::placeholder { color: #d0d5df; }
+
+
+    input:focus {
+      border-color: #55b8ff;
+      box-shadow: 0 0 0 3px rgba(50,160,255,.18);
+    }
+
+
+    select {
+      width: 210px;
+      padding: 0 14px;
+      color: white;
+      background: #151c2b;
+      border: 1px solid rgba(255,255,255,.24);
+      cursor: pointer;
+    }
+
+
+    select option {
+      background: #151c2b;
+      color: white;
+    }
+
+
+    button {
+      width: 125px;
+      padding: 0 18px;
+      color: #06111b;
+      font-weight: 800;
+      background: linear-gradient(135deg, #66d8ff, #fff);
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s;
+    }
+
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(100,210,255,.35);
+    }
+
+
+    .hint {
+      margin: 14px 3px 0;
+      color: #c9d2df;
+      font-size: 13px;
+    }
+
+
+    .results {
+      width: min(760px, 95vw);
+      margin-top: 20px;
+      display: none;
+      padding: 22px;
+      border-radius: 18px;
+      background: rgba(3, 7, 15, .76);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(10px);
+    }
+
+
+    .results.show { display: block; }
+
+
+    .results h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+
+
+    .results h2 small {
+      font-weight: normal;
+      font-size: 14px;
+      color: #9fb3cc;
+    }
+
+
+    .result {
+      padding: 12px 14px;
+      margin-top: 8px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.08);
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+
+    .result:hover,
+    .result:focus-visible {
+      background: rgba(102,216,255,.18);
+      outline: none;
+    }
+
+
+    .result strong { display: block; }
+
+
+    .result .meta {
+      display: block;
+      margin-top: 4px;
+      font-size: 13px;
+      color: #b9c7da;
+    }
+
+
+    .empty { color: #cbd3df; margin: 0; }
+    .error { color: #ffb3b3; margin: 0; }
+
+
+    /* ---------- Ventana de detalle ---------- */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+
+    .modal[hidden] { display: none; }
+
+
+    .modal-card {
+      position: relative;
+      width: min(720px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      border-radius: 20px;
+      background: rgba(8, 12, 24, .96);
+      border: 1px solid rgba(255,255,255,.25);
+      box-shadow: 0 25px 80px rgba(0,0,0,.6);
+    }
+
+
+    .modal .close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 50%;
+      font-size: 22px;
+      line-height: 1;
+      color: white;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.24);
+      box-shadow: none;
+    }
+
+
+    .modal .close:hover {
+      transform: none;
+      background: rgba(255,255,255,.22);
+      box-shadow: none;
+    }
+
+
+    .modal .back {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: #66d8ff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+
+    .modal h2 {
+      margin: 0 44px 4px 0;
+      font-size: 28px;
+    }
+
+
+    .modal .kind {
+      margin: 0 0 20px;
+      color: #9fb3cc;
+      font-size: 14px;
+    }
+
+
+    .fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 0 0 20px;
+    }
+
+
+    .fields div {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.07);
+    }
+
+
+    .fields dt {
+      font-size: 12px;
+      color: #9fb3cc;
+      margin-bottom: 3px;
+    }
+
+
+    .fields dd {
+      margin: 0;
+      font-size: 15px;
+      overflow-wrap: anywhere;
+    }
+
+
+    .crawl {
+      margin: 0 0 20px;
+      padding: 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.07);
+      color: #e6d98a;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+
+    .modal h3 {
+      margin: 18px 0 8px;
+      font-size: 16px;
+      color: #d8e8ff;
+    }
+
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+
+    .chip {
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      background: rgba(102,216,255,.14);
+      border: 1px solid rgba(102,216,255,.35);
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+
+    .chip:hover,
+    .chip:focus-visible {
+      background: rgba(102,216,255,.3);
+      outline: none;
+    }
+
+
+    .none { color: #9fb3cc; font-size: 14px; margin: 0; }
+
+
+    @media (max-width: 700px) {
+      .page { padding-top: 35px; }
+      .subtitle { margin-bottom: 30px; }
+      .search-row { flex-direction: column; }
+      select, button { width: 100%; }
+      h1 { letter-spacing: 3px; }
+      .modal-card { padding: 22px 18px; }
+    }
