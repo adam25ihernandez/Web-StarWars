@@ -1,10 +1,13 @@
-// Acceso a los elementos del DOM mediante document.getElementById
+// ===============================
+// SELECCIÓN DE ELEMENTOS DEL HTML
+// ===============================
 const formulario = document.getElementById('formBuscador');
 const selectCategoria = document.getElementById('selectCategoria');
 const inputNombre = document.getElementById('inputNombre');
 const contenedorResultado = document.getElementById('resultado');
-
-// Diccionario de traducción de climas
+// ==================
+// TRADUCCIÓN CLIMAS
+// ==================
 const traduccionesClima = {
   arid: "árido",
   temperate: "templado",
@@ -18,124 +21,129 @@ const traduccionesClima = {
   artificial_temperate: "templado artificial",
   unknown: "desconocido"
 };
-
+// Traducción dinámica de climas múltiples
+function traducirClimas(climaTexto) {
+  if (!climaTexto) return 'desconocido';
+  const listaClimas = climaTexto.split(', ');
+  const listaTraducida = listaClimas.map(clima => {
+    return traduccionesClima[clima] || clima;
+  });
+  return listaTraducida.join(', ');
+}
+// ======================================
+// FUNCIÓN PARA EL ALERT (FICHA TÉCNICA)
+// ======================================
+function construirTextoAlert(categoria, elemento) {
+  if (categoria === 'people') {
+    return (
+      `Nombre: ${elemento.name}\n` +
+      `Altura: ${elemento.height} cm\n` +
+      `Peso: ${elemento.mass} kg\n` +
+      `Género: ${elemento.gender}\n` +
+      `Nacimiento: ${elemento.birth_year}`
+    );
+  }
+  if (categoria === 'planets') {
+    return (
+      `Nombre: ${elemento.name}\n` +
+      `Clima: ${traducirClimas(elemento.climate)}\n` +
+      `Terreno: ${elemento.terrain}\n` +
+      `Diámetro: ${elemento.diameter} km\n` +
+      `Población: ${elemento.population}`
+    );
+  }
+  if (categoria === 'starships') {
+    return (
+      `Nombre: ${elemento.name}\n` +
+      `Modelo: ${elemento.model}\n` +
+      `Fabricante: ${elemento.manufacturer}\n` +
+      `Pasajeros: ${elemento.passengers}\n` +
+      `Longitud: ${elemento.length} m`
+    );
+  }
+  return `Nombre: ${elemento.name || elemento.title}`;
+}
+// =============================
+// FUNCIÓN PRINCIPAL DE BÚSQUEDA
+// =============================
 async function buscarPorNombreYCategoria(event) {
   event.preventDefault();
-
   const categoria = selectCategoria.value;
   const textoBuscado = inputNombre.value.trim().toLowerCase();
 
-  contenedorResultado.textContent = `Buscando "${textoBuscado}" en la categoría ${categoria}...`;
+  contenedorResultado.classList.add('show'); // CSS: Mostramos la caja de resultados agregando la clase '.show' (.results.show { display: block })
+  contenedorResultado.innerHTML = `<p class="empty">Buscando </p>`; // CSS: Estilo para mensajes informativos usando la clase '.empty'
 
-  // Array para guardar todos los resultados encontrados
   const resultadosEncontrados = [];
-
+  
+  // Búsqueda secuencial en la SWAPI
   for (let id = 1; id <= 80; id++) {
     try {
       const response = await fetch(`https://swapi.dev/api/${categoria}/${id}/`);
-
-      if (!response.ok) {
-        continue;
-      }
+      if (!response.ok) continue;
 
       const data = await response.json();
       const nombreElemento = (data.name || data.title || '').toLowerCase();
 
-      // Si el nombre coincide con la búsqueda
       if (nombreElemento.startsWith(textoBuscado)) {
-        // 1. Guardamos el objeto completo recibido de la API
         resultadosEncontrados.push(data);
       }
-
     } catch (error) {
-      console.error(`Error procesando la petición con ID ${id}:`, error);
+      console.error(`Error procesando ID ${id}:`, error);
     }
   }
 
-  //Alert con lista detallada 
-    enlace.addEventListener('click', function(event) {
-    event.preventDefault();
-
-    alert(
-      `Nombre: ${personaje.name}\n` +
-      `Altura: ${personaje.height} cm\n` +
-      `Peso: ${personaje.mass} kg\n` +
-      `Género: ${personaje.gender}\n` +
-      `Nacimiento: ${personaje.birth_year}`
-    );
-  });
-
-
-
-
-  
-  // Limpiamos el mensaje de carga en el DOM
-  contenedorResultado.textContent = '';
+  contenedorResultado.innerHTML = ''; // Limpiar el texto provisional
 
   if (resultadosEncontrados.length > 0) {
-    // Creamos la lista principal <ul>
-    const lista = document.createElement('ul');
-
-    // 2. Recorremos cada elemento encontrado en el array
+    const tituloSeccion = document.createElement('h2');
+    tituloSeccion.innerHTML = `Resultados <small>(${resultadosEncontrados.length} encontrados)</small>`;
+    contenedorResultado.appendChild(tituloSeccion);
+    // =================================
+    // CREACIÓN DE TARJETAS PARA EL CSS
+    // =================================
     resultadosEncontrados.forEach(elemento => {
-      const elementoLista = document.createElement('li');
+      const tarjeta = document.createElement('div'); // CSS: Crear el <div> contenedor con la clase '.result' (efecto glassmorphism y hover)
+      tarjeta.classList.add('result');
 
-      // Título con el nombre del resultado
-      const titulo = document.createElement('strong');
+      const titulo = document.createElement('strong'); // CSS: Título principal en negrita e interactivo
       titulo.textContent = elemento.name || elemento.title;
-      elementoLista.appendChild(titulo);
+      titulo.style.cursor = 'pointer'; 
 
-      // DATOS ADICIONALES PARA PERSONAJES
+      titulo.addEventListener('click', function () { //Muestra el alert con la ficha completa al hacer clic en el título
+        alert(construirTextoAlert(categoria, elemento));
+      });
+
+      tarjeta.appendChild(titulo);
+
+      const meta = document.createElement('span'); // CSS: Subtexto con la clase '.meta' (letra más pequeña y color azul claro)
+      meta.classList.add('meta');
+
+      // Personajes
       if (categoria === 'people') {
-        const infoPersonaje = document.createElement('p');
-        infoPersonaje.textContent = `Altura: ${elemento.height || 'Desconocida'} cm | Peso: ${elemento.mass || 'Desconocido'} kg`;
-        elementoLista.appendChild(infoPersonaje);
+        meta.textContent = `Altura: ${elemento.height || 'Desconocida'} cm | Peso: ${elemento.mass || 'Desconocido'} kg`;
       }
-
-      // DATOS ADICIONALES PARA PLANETAS
+      // Planetas
       if (categoria === 'planets') {
-        const clima = document.createElement('p');
-        clima.textContent = `Clima: ${traduccionesClima[elemento.climate] || elemento.climate}`;
-
-        let poblacionFormateada;
+        const clima = traducirClimas(elemento.climate);
+        let poblacion;
         if (!isNaN(elemento.population)) {
-          poblacionFormateada = `${Number(elemento.population).toLocaleString('es-ES')} habitantes`;
+          poblacion = `${Number(elemento.population).toLocaleString('es-ES')} habitantes`;
         } else {
-          poblacionFormateada = 'Desconocida';
+          poblacion = 'Desconocida';
         }
-
-        const poblacion = document.createElement('p');
-        poblacion.textContent = `Población: ${poblacionFormateada}`;
-
-        // Insertamos dentro del <li> de este planeta
-        elementoLista.appendChild(clima);
-        elementoLista.appendChild(poblacion);
+        meta.textContent = `Clima: ${clima} | Población: ${poblacion}`;
       }
-
-      // DATOS ADICIONALES PARA NAVES
+      //Naves
       if (categoria === 'starships') {
-        const modelo = document.createElement('p');
-        modelo.textContent = `Modelo: ${elemento.model || 'Desconocido'}`;
-
-        const capacidad = document.createElement('p');
-        capacidad.textContent = `Capacidad de pasajeros: ${elemento.passengers || 'Desconocida'}`;
-
-        // 3. Insertamos dentro del <li> de esta nave
-        elementoLista.appendChild(modelo);
-        elementoLista.appendChild(capacidad);
+        meta.textContent = `Modelo: ${elemento.model || 'Desconocido'} | Pasajeros: ${elemento.passengers || 'Desconocidos'}`;
       }
-
-      // Insertamos el <li> completo dentro de la lista <ul>
-      lista.appendChild(elementoLista);
+      tarjeta.appendChild(meta);
+      contenedorResultado.appendChild(tarjeta);
     });
-
-    // Insertamos la lista <ul> dentro del contenedor de la página
-    contenedorResultado.appendChild(lista);
-
   } else {
-    contenedorResultado.textContent =
-      `No se encontró ningún elemento en la categoría "${categoria}" con el nombre "${inputNombre.value}".`;
+    // CSS: Estilo para cuando no hay resultados usando la clase '.empty'
+    contenedorResultado.innerHTML = `<p class="empty">No se encontró ningún elemento que coincida con "${inputNombre.value}".</p>`;
   }
 }
-
 formulario.addEventListener('submit', buscarPorNombreYCategoria);
