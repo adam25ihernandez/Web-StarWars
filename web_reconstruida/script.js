@@ -5,6 +5,7 @@ const formulario = document.getElementById('formBuscador');
 const selectCategoria = document.getElementById('selectCategoria');
 const inputNombre = document.getElementById('inputNombre');
 const contenedorResultado = document.getElementById('resultado');
+
 // ==================
 // TRADUCCIÓN CLIMAS
 // ==================
@@ -21,6 +22,7 @@ const traduccionesClima = {
   artificial_temperate: "templado artificial",
   unknown: "desconocido"
 };
+
 // Traducción dinámica de climas múltiples
 function traducirClimas(climaTexto) {
   if (!climaTexto) return 'desconocido';
@@ -30,6 +32,13 @@ function traducirClimas(climaTexto) {
   });
   return listaTraducida.join(', ');
 }
+
+// Traduce "unknown" y añade la unidad solo si hay dato
+function traducirDesconocido(valor, unidad = '') {
+  if (!valor || valor === 'unknown') return 'desconocido';
+  return unidad ? `${valor} ${unidad}` : valor;
+}
+
 // ======================================
 // FUNCIÓN PARA EL ALERT (FICHA TÉCNICA)
 // ======================================
@@ -37,12 +46,13 @@ function construirTextoAlert(categoria, elemento) {
   if (categoria === 'people') {
     return (
       `Nombre: ${elemento.name}\n` +
-      `Altura: ${elemento.height} cm\n` +
-      `Peso: ${elemento.mass} kg\n` +
+      `Altura: ${traducirDesconocido(elemento.height, 'cm')}\n` +
+      `Peso: ${traducirDesconocido(elemento.mass, 'kg')}\n` +
       `Género: ${elemento.gender}\n` +
-      `Nacimiento: ${elemento.birth_year}`
+      `Nacimiento: ${traducirDesconocido(elemento.birth_year)}`
     );
   }
+
   if (categoria === 'planets') {
     return (
       `Nombre: ${elemento.name}\n` +
@@ -52,6 +62,7 @@ function construirTextoAlert(categoria, elemento) {
       `Población: ${elemento.population}`
     );
   }
+
   if (categoria === 'starships') {
     return (
       `Nombre: ${elemento.name}\n` +
@@ -61,8 +72,10 @@ function construirTextoAlert(categoria, elemento) {
       `Longitud: ${elemento.length} m`
     );
   }
+
   return `Nombre: ${elemento.name || elemento.title}`;
 }
+
 // =============================
 // FUNCIÓN PRINCIPAL DE BÚSQUEDA
 // =============================
@@ -75,7 +88,7 @@ async function buscarPorNombreYCategoria(event) {
   contenedorResultado.innerHTML = `<p class="empty">Buscando </p>`; // CSS: Estilo para mensajes informativos usando la clase '.empty'
 
   const resultadosEncontrados = [];
-  
+
   // Búsqueda secuencial en la SWAPI
   for (let id = 1; id <= 80; id++) {
     try {
@@ -99,6 +112,7 @@ async function buscarPorNombreYCategoria(event) {
     const tituloSeccion = document.createElement('h2');
     tituloSeccion.innerHTML = `Resultados <small>(${resultadosEncontrados.length} encontrados)</small>`;
     contenedorResultado.appendChild(tituloSeccion);
+
     // =================================
     // CREACIÓN DE TARJETAS PARA EL CSS
     // =================================
@@ -108,9 +122,9 @@ async function buscarPorNombreYCategoria(event) {
 
       const titulo = document.createElement('strong'); // CSS: Título principal en negrita e interactivo
       titulo.textContent = elemento.name || elemento.title;
-      titulo.style.cursor = 'pointer'; 
+      titulo.style.cursor = 'pointer';
 
-      titulo.addEventListener('click', function () { //Muestra el alert con la ficha completa al hacer clic en el título
+      titulo.addEventListener('click', function () { // Muestra el alert con la ficha completa al hacer clic en el título
         alert(construirTextoAlert(categoria, elemento));
       });
 
@@ -121,8 +135,9 @@ async function buscarPorNombreYCategoria(event) {
 
       // Personajes
       if (categoria === 'people') {
-        meta.textContent = `Altura: ${elemento.height || 'Desconocida'} cm | Peso: ${elemento.mass || 'Desconocido'} kg`;
+        meta.textContent = `Altura: ${traducirDesconocido(elemento.height, 'cm')} | Peso: ${traducirDesconocido(elemento.mass, 'kg')}`;
       }
+
       // Planetas
       if (categoria === 'planets') {
         const clima = traducirClimas(elemento.climate);
@@ -134,10 +149,12 @@ async function buscarPorNombreYCategoria(event) {
         }
         meta.textContent = `Clima: ${clima} | Población: ${poblacion}`;
       }
-      //Naves
+
+      // Naves
       if (categoria === 'starships') {
         meta.textContent = `Modelo: ${elemento.model || 'Desconocido'} | Pasajeros: ${elemento.passengers || 'Desconocidos'}`;
       }
+
       tarjeta.appendChild(meta);
       contenedorResultado.appendChild(tarjeta);
     });
@@ -146,4 +163,5 @@ async function buscarPorNombreYCategoria(event) {
     contenedorResultado.innerHTML = `<p class="empty">No se encontró ningún elemento que coincida con "${inputNombre.value}".</p>`;
   }
 }
+
 formulario.addEventListener('submit', buscarPorNombreYCategoria);
