@@ -142,7 +142,7 @@
 
 
     .results {
-      width: min(760px, 95vw);
+      width: min(1200px, 95vw);
       margin-top: 20px;
       display: none;
       padding: 22px;
@@ -154,6 +154,14 @@
 
 
     .results.show { display: block; }
+
+    /* ---------- Añadido resultado imagen ---------- */
+    .results img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 12px;
+      }
 
 
     .results h2 {
