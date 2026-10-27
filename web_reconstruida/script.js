@@ -76,6 +76,22 @@ function construirTextoAlert(categoria, elemento) {
   return `Nombre: ${elemento.name || elemento.title}`;
 }
 
+// ==================================
+// FUNCIÓN PARA MOSTRAR LA CRONOLOGÍA
+// ==================================
+function mostrarCronologia() {
+  contenedorResultado.classList.add('show');
+  contenedorResultado.innerHTML = '';
+
+  const imagen = new Image();
+  imagen.src = 'cronologia-starwars.jpg';
+  imagen.alt = 'Cronología de Star Wars';
+  imagen.style.maxWidth = '100%';
+  imagen.style.borderRadius = '8px';
+
+  contenedorResultado.appendChild(imagen);
+}
+
 // =============================
 // FUNCIÓN PRINCIPAL DE BÚSQUEDA
 // =============================
@@ -83,6 +99,12 @@ async function buscarPorNombreYCategoria(event) {
   event.preventDefault();
   const categoria = selectCategoria.value;
   const textoBuscado = inputNombre.value.trim().toLowerCase();
+
+  // Cronología (se evalúa primero para evitar consultas a la SWAPI)
+  if (categoria === 'timeline') {
+    mostrarCronologia();
+    return; // no consultar a la api
+  }
 
   contenedorResultado.classList.add('show'); // CSS: Mostramos la caja de resultados agregando la clase '.show' (.results.show { display: block })
   contenedorResultado.innerHTML = `<p class="empty">Buscando </p>`; // CSS: Estilo para mensajes informativos usando la clase '.empty'
@@ -163,5 +185,15 @@ async function buscarPorNombreYCategoria(event) {
     contenedorResultado.innerHTML = `<p class="empty">No se encontró ningún elemento que coincida con "${inputNombre.value}".</p>`;
   }
 }
+
+//EVENTO CHANGE
+selectCategoria.addEventListener('change', function () {
+  if (selectCategoria.value === 'timeline') {
+    mostrarCronologia();
+  } else {
+    contenedorResultado.classList.remove('show');
+    contenedorResultado.innerHTML = '';
+  }
+});
 
 formulario.addEventListener('submit', buscarPorNombreYCategoria);
